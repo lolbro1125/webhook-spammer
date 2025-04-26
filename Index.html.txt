@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>$kid Webhook Spammer (Educational)</title>
+  <style>
+    body {
+      background: url('https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: white;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      padding: 30px;
+      width: 80%;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 15px #fff;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+    }
+    button {
+      background: #ff69b4;
+      color: white;
+      cursor: pointer;
+    }
+    #log {
+      margin-top: 20px;
+      max-height: 150px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>$kid Webhook Spammer</h1>
+    <p><strong>Educational use only!</strong></p>
+    <input type="url" id="webhook" placeholder="Enter Discord Webhook URL" required />
+    <textarea id="message" rows="4" placeholder="Enter your message"></textarea>
+    <input type="number" id="count" min="1" max="50" placeholder="How many times? (1-50)" />
+    <button onclick="sendMessages()">Send Messages</button>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    async function sendMessages() {
+      const webhook = document.getElementById("webhook").value;
+      const message = document.getElementById("message").value;
+      let count = parseInt(document.getElementById("count").value);
+      const log = document.getElementById("log");
+      
+      if (!webhook || !message || !count || count < 1 || count > 50) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      log.innerHTML = "";
+      for (let i = 1; i <= count; i++) {
+        try {
+          const res = await fetch(webhook, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: message })
+          });
+
+          if (res.ok) {
+            log.innerHTML += `✅ Message ${i} sent<br>`;
+          } else {
+            log.innerHTML += `❌ Message ${i} failed (${res.status})<br>`;
+          }
+        } catch (e) {
+          log.innerHTML += `❌ Message ${i} error (${e.message})<br>`;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)); // delay between messages
+      }
+    }
+  </script>
+</body>
+</html>
